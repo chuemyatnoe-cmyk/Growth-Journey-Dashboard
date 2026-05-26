@@ -7,8 +7,7 @@ import plotly.express as px
 # ---------------------------------------------------
 st.set_page_config(
     page_title="My Growth Journey Dashboard",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    layout="wide"
 )
 
 # ---------------------------------------------------
@@ -16,9 +15,10 @@ st.set_page_config(
 # ---------------------------------------------------
 @st.cache_data
 def load_data():
+
     df = pd.read_csv("Chue Myat Noe_Personal Story Dataset.csv")
 
-    # Clean dates
+    # Clean date columns
     df['Start Date'] = pd.to_datetime(df['Start Date'], errors='coerce')
     df['End Date'] = pd.to_datetime(df['End Date'], errors='coerce')
 
@@ -64,32 +64,94 @@ page = st.sidebar.radio(
     ]
 )
 
-st.sidebar.markdown("---")
-
 # ---------------------------------------------------
-# FILTERS
+# TOP FILTERS
 # ---------------------------------------------------
-st.sidebar.header("🎛️ Filters")
+st.markdown("## 🎛️ Dashboard Filters")
 
-# Filter by Journey Type
-journey_filter = st.sidebar.multiselect(
-    "Select Journey Type",
-    options=df['Journey Type'].unique(),
-    default=df['Journey Type'].unique()
-)
+f1, f2, f3 = st.columns(3)
 
-# Filter by Year
-year_filter = st.sidebar.multiselect(
-    "Select Year",
-    options=sorted(df['Year'].unique()),
-    default=sorted(df['Year'].unique())
-)
+# Year Filter
+with f1:
+    selected_years = st.multiselect(
+        "Year",
+        options=sorted(df['Year'].unique()),
+        default=sorted(df['Year'].unique())
+    )
 
-# Apply filters
+# Journey Type Filter
+with f2:
+    selected_journey = st.multiselect(
+        "Journey Type",
+        options=df['Journey Type'].unique(),
+        default=df['Journey Type'].unique()
+    )
+
+# Organization Filter
+with f3:
+    selected_org = st.multiselect(
+        "Organization",
+        options=df['Organization/Event'].unique(),
+        default=df['Organization/Event'].unique()
+    )
+
+# Apply Filters
 filtered_df = df[
-    (df['Journey Type'].isin(journey_filter)) &
-    (df['Year'].isin(year_filter))
+    (df['Year'].isin(selected_years)) &
+    (df['Journey Type'].isin(selected_journey)) &
+    (df['Organization/Event'].isin(selected_org))
 ]
+
+# ---------------------------------------------------
+# KPI SECTION
+# ---------------------------------------------------
+st.markdown("## 📌 Overview Metrics")
+
+k1, k2, k3, k4 = st.columns(4)
+
+# Metrics calculations
+total_roles = len(filtered_df)
+
+volunteer_roles = len(
+    filtered_df[
+        filtered_df['Journey Type'] == "Volunteer"
+    ]
+)
+
+highest_salary = filtered_df[
+    'Annual Avg Salary (MMK)'
+].max()
+
+organizations = filtered_df[
+    'Organization/Event'
+].nunique()
+
+# KPI Cards
+with k1:
+    st.metric(
+        "Total Roles",
+        total_roles
+    )
+
+with k2:
+    st.metric(
+        "Volunteer Roles",
+        volunteer_roles
+    )
+
+with k3:
+    st.metric(
+        "Highest Salary (MMK)",
+        f"{int(highest_salary):,}"
+    )
+
+with k4:
+    st.metric(
+        "Organizations Joined",
+        organizations
+    )
+
+st.markdown("---")
 
 # ---------------------------------------------------
 # HOME PAGE
@@ -101,67 +163,17 @@ if page == "Home":
     st.markdown("""
     ### Volunteering, Leadership, and Salary Growth Journey
 
-    This dashboard transforms my personal experiences into data-driven insights.
-    It explores how volunteering, leadership roles, and organizational involvement
-    shaped my professional growth and salary development over time.
+    This dashboard transforms my personal experiences into structured data
+    to explore how volunteering and leadership opportunities shaped my
+    career growth and salary development over time.
 
     Through this project, I wanted to understand:
-    - How volunteering contributed to my career opportunities
-    - Which years showed the biggest growth
-    - How leadership experiences influenced my development
-    - What decisions I should make differently in the future
+
+    - How volunteering contributed to professional opportunities
+    - Which years showed the greatest growth
+    - How leadership roles influenced my career
+    - What future decisions I should make differently
     """)
-
-    st.markdown("---")
-
-    # KPI SECTION
-    st.header("📌 General Overview")
-
-    col1, col2, col3, col4 = st.columns(4)
-
-    # Total roles
-    total_roles = len(filtered_df)
-
-    # Volunteer roles
-    volunteer_roles = len(
-        filtered_df[
-            filtered_df['Journey Type'] == "Volunteer"
-        ]
-    )
-
-    # Highest salary
-    highest_salary = filtered_df[
-        'Annual Avg Salary (MMK)'
-    ].max()
-
-    # Organizations
-    total_orgs = filtered_df[
-        'Organization/Event'
-    ].nunique()
-
-    with col1:
-        st.metric(
-            "Total Roles",
-            total_roles
-        )
-
-    with col2:
-        st.metric(
-            "Volunteer Roles",
-            volunteer_roles
-        )
-
-    with col3:
-        st.metric(
-            "Highest Salary (MMK)",
-            f"{int(highest_salary):,}"
-        )
-
-    with col4:
-        st.metric(
-            "Organizations Joined",
-            total_orgs
-        )
 
     st.markdown("---")
 
@@ -177,7 +189,7 @@ elif page == "Data Visualizations":
     st.title("📊 Data Visualizations")
 
     # ---------------------------------------------------
-    # VOLUNTEERING TIMELINE
+    # VOLUNTEER TIMELINE
     # ---------------------------------------------------
     st.subheader("📅 Volunteering Journey Across Organizations")
 
@@ -205,40 +217,53 @@ elif page == "Data Visualizations":
     st.plotly_chart(fig_timeline, use_container_width=True)
 
     st.caption("""
-    Insight: Long-term volunteering experiences helped build leadership,
-    communication, and organizational skills.
+    Insight:
+    Long-term volunteering experiences strengthened leadership,
+    teamwork, and communication skills.
     """)
 
     st.markdown("---")
 
     # ---------------------------------------------------
-    # SALARY GROWTH
+    # SALARY GROWTH LINE CHART
     # ---------------------------------------------------
-    st.subheader("📈 Salary Growth Over Time")
+    st.subheader("📈 Salary Growth Journey")
 
-    salary_growth = filtered_df.dropna(
+    salary_df = filtered_df.dropna(
         subset=['Cumulative Salary Growth (MMK)']
     )
 
     fig_salary = px.line(
-        salary_growth,
+        salary_df,
         x="Year",
         y="Cumulative Salary Growth (MMK)",
+        color="Journey Type",
         markers=True,
-        title="Cumulative Salary Growth"
+        hover_data=[
+            "Organization/Event",
+            "Role"
+        ],
+        title="Salary Growth Across My Journey"
+    )
+
+    fig_salary.update_layout(
+        xaxis_title="Year",
+        yaxis_title="Cumulative Salary Growth (MMK)",
+        legend_title="Journey Type"
     )
 
     st.plotly_chart(fig_salary, use_container_width=True)
 
     st.caption("""
-    Insight: Salary growth accelerated after gaining more leadership
-    and organizational experiences.
+    Insight:
+    Salary growth accelerated after gaining more
+    leadership and organizational experience.
     """)
 
     st.markdown("---")
 
     # ---------------------------------------------------
-    # JOURNEY TYPE DISTRIBUTION
+    # VOLUNTEER VS EMPLOYMENT
     # ---------------------------------------------------
     st.subheader("📊 Volunteer vs Employment Roles")
 
@@ -251,8 +276,9 @@ elif page == "Data Visualizations":
     st.plotly_chart(fig_roles, use_container_width=True)
 
     st.caption("""
-    Insight: Volunteering experiences formed a major foundation
-    for professional development.
+    Insight:
+    Volunteering experiences formed the foundation
+    of professional development.
     """)
 
     st.markdown("---")
@@ -286,8 +312,9 @@ elif page == "Data Visualizations":
     st.plotly_chart(fig_org, use_container_width=True)
 
     st.caption("""
-    Insight: Joining different organizations improved adaptability,
-    networking, and teamwork skills.
+    Insight:
+    Joining different organizations improved adaptability,
+    networking, and leadership development.
     """)
 
 # ---------------------------------------------------
@@ -299,7 +326,6 @@ elif page == "Key Insights":
 
     st.markdown("---")
 
-    # KPI INSIGHTS
     c1, c2, c3, c4 = st.columns(4)
 
     c1.metric(
@@ -324,26 +350,24 @@ elif page == "Key Insights":
 
     st.markdown("---")
 
-    st.subheader("📌 Main Findings")
-
     st.success("""
-    Volunteering experiences created opportunities for leadership development,
-    networking, and communication skills.
+    Volunteering created opportunities for leadership,
+    networking, and communication development.
     """)
 
     st.info("""
-    Salary growth became more visible after taking leadership and
-    organizational responsibilities.
+    Salary growth became more visible after taking
+    leadership and organizational responsibilities.
     """)
 
     st.warning("""
-    Balancing volunteering, academics, and career development
-    remained a challenge throughout the journey.
+    Balancing volunteering, academics,
+    and employment remained challenging.
     """)
 
     st.error("""
-    Some experiences created stress and workload pressure,
-    especially during periods with multiple responsibilities.
+    Some periods created stress due to handling
+    multiple responsibilities simultaneously.
     """)
 
     st.markdown("---")
@@ -353,11 +377,11 @@ elif page == "Key Insights":
     st.markdown("""
     Based on the data, I should:
 
-    1. Continue participating in meaningful leadership opportunities
-    2. Focus on long-term projects with higher impact
-    3. Build stronger technical and professional skills
-    4. Improve work-life balance
-    5. Prioritize opportunities that support both growth and sustainability
+    1. Continue joining meaningful leadership opportunities
+    2. Focus on long-term projects with stronger impact
+    3. Build more technical and professional skills
+    4. Improve balance between volunteering and work
+    5. Prioritize sustainable career growth opportunities
     """)
 
 # ---------------------------------------------------
@@ -373,9 +397,9 @@ elif page == "Ethics & Responsibility":
     st.header("🔒 Privacy Statement")
 
     st.info("""
-    - No sensitive personal information is included.
+    - All sensitive personal information was removed.
     - Third-party identities were anonymized.
-    - Salary values are simplified for educational purposes.
+    - Salary values were simplified for educational use.
     - The dataset is used only for academic storytelling.
     """)
 
@@ -386,20 +410,20 @@ elif page == "Ethics & Responsibility":
 
     with st.expander("Memory Bias"):
         st.write("""
-        Some experiences depend on personal memory and reflection,
+        Some experiences rely on personal reflection,
         which may affect accuracy.
         """)
 
     with st.expander("Small Dataset"):
         st.write("""
         The dataset is limited and cannot fully represent
-        long-term career patterns.
+        long-term professional development.
         """)
 
     with st.expander("Subjective Interpretation"):
         st.write("""
-        Leadership impact and growth are partially subjective
-        and difficult to measure numerically.
+        Leadership impact and personal growth
+        are difficult to measure numerically.
         """)
 
     st.markdown("---")
@@ -408,10 +432,10 @@ elif page == "Ethics & Responsibility":
     st.header("📊 Visualization Justification")
 
     st.success("""
-    - Timeline bar chart shows organizational journey progression
-    - Salary line chart shows career growth trends
+    - Timeline chart visualizes volunteering progression
+    - Salary line chart shows growth trends over time
     - Histogram compares volunteer and employment experiences
-    - Organization chart highlights networking and participation
+    - Organization chart highlights participation and networking
     """)
 
     st.markdown("---")
@@ -423,8 +447,8 @@ elif page == "Ethics & Responsibility":
     This dashboard identifies patterns and reflections,
     not direct causation.
 
-    Volunteering may support career growth,
-    but external economic, educational,
+    Volunteering may contribute to growth,
+    but educational, economic,
     and social factors also influence outcomes.
     """)
 
