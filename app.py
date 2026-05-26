@@ -51,35 +51,35 @@ st.write("This dashboard transforms my personal story into structured data, show
 # 2. Visualizations
 st.header("📊 Data Visualizations")
 
-# Volunteer Journey Timeline Bar Chart
-st.subheader("📅 Volunteering Journey Timeline")
+# Volunteer Journey by Organization
+st.subheader("📅 Volunteering Journey by Organization")
 
-# Filter volunteer data only
+# Filter volunteer data
 volunteer_df = filtered_df[filtered_df['Journey Type'] == "Volunteer"]
 
-# Count volunteer activities by year
-volunteer_years = volunteer_df.groupby("Year").size().reset_index(name="Number of Volunteer Roles")
+# Create duration label
+volunteer_df['Duration Label'] = volunteer_df['Duration (Months)'].fillna(0).astype(int).astype(str) + " months"
 
-# Create bar chart
+# Horizontal bar chart
 fig_timeline = px.bar(
-    volunteer_years,
-    x="Year",
-    y="Number of Volunteer Roles",
-    text="Number of Volunteer Roles",
-    color="Number of Volunteer Roles",
-    title="Volunteer Journey Across Years"
+    volunteer_df,
+    x="Duration (Months)",
+    y="Organization/Event",
+    color="Year",
+    orientation="h",
+    text="Duration Label",
+    hover_data=["Role"],
+    title="Volunteer Journey Across Organizations"
 )
 
 # Improve layout
 fig_timeline.update_layout(
-    xaxis_title="Year",
-    yaxis_title="Volunteer Activities",
-    showlegend=False
+    xaxis_title="Duration in Months",
+    yaxis_title="Organization",
+    legend_title="Year"
 )
 
-# Show chart
 st.plotly_chart(fig_timeline, use_container_width=True)
-
 # Salary growth line
 fig_salary = px.line(filtered_df.dropna(subset=["Cumulative Salary Growth (MMK)"]),
                      x="Year", y="Cumulative Salary Growth (MMK)", markers=True)
