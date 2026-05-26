@@ -71,18 +71,21 @@ st.sidebar.markdown("---")
 # ---------------------------------------------------
 st.sidebar.header("🎛️ Filters")
 
+# Filter by Journey Type
 journey_filter = st.sidebar.multiselect(
-    "Journey Type",
-    df['Journey Type'].unique(),
+    "Select Journey Type",
+    options=df['Journey Type'].unique(),
     default=df['Journey Type'].unique()
 )
 
+# Filter by Year
 year_filter = st.sidebar.multiselect(
-    "Year",
-    sorted(df['Year'].unique()),
+    "Select Year",
+    options=sorted(df['Year'].unique()),
     default=sorted(df['Year'].unique())
 )
 
+# Apply filters
 filtered_df = df[
     (df['Journey Type'].isin(journey_filter)) &
     (df['Year'].isin(year_filter))
