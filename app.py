@@ -18,7 +18,7 @@ def load_data():
 
     df = pd.read_csv("Chue Myat Noe_Personal Story Dataset.csv")
 
-    # Clean dates
+    # Clean date columns
     df['Start Date'] = pd.to_datetime(df['Start Date'], errors='coerce')
     df['End Date'] = pd.to_datetime(df['End Date'], errors='coerce')
 
@@ -64,42 +64,31 @@ page = st.sidebar.radio(
     ]
 )
 
-# ---------------------------------------------------
-# TOP FILTERS
-# ---------------------------------------------------
-st.markdown("## 🎛️ Dashboard Filters")
+st.sidebar.markdown("---")
 
-f1, f2, f3 = st.columns(3)
+# ---------------------------------------------------
+# SIDEBAR FILTERS
+# ---------------------------------------------------
+st.sidebar.header("🎛️ Dashboard Filters")
 
 # Year Filter
-with f1:
-    selected_years = st.multiselect(
-        "Year",
-        options=sorted(df['Year'].unique()),
-        default=sorted(df['Year'].unique())
-    )
+selected_years = st.sidebar.multiselect(
+    "Select Year",
+    options=sorted(df['Year'].unique()),
+    default=sorted(df['Year'].unique())
+)
 
 # Journey Type Filter
-with f2:
-    selected_journey = st.multiselect(
-        "Journey Type",
-        options=df['Journey Type'].unique(),
-        default=df['Journey Type'].unique()
-    )
-
-# Organization Filter
-with f3:
-    selected_org = st.multiselect(
-        "Organization",
-        options=df['Organization/Event'].unique(),
-        default=df['Organization/Event'].unique()
-    )
+selected_journey = st.sidebar.multiselect(
+    "Select Journey Type",
+    options=df['Journey Type'].unique(),
+    default=df['Journey Type'].unique()
+)
 
 # Apply filters
 filtered_df = df[
     (df['Year'].isin(selected_years)) &
-    (df['Journey Type'].isin(selected_journey)) &
-    (df['Organization/Event'].isin(selected_org))
+    (df['Journey Type'].isin(selected_journey))
 ]
 
 # ---------------------------------------------------
@@ -117,13 +106,15 @@ volunteer_roles = len(
     ]
 )
 
+employment_roles = len(
+    filtered_df[
+        filtered_df['Journey Type'] == "Employment"
+    ]
+)
+
 highest_salary = filtered_df[
     'Annual Avg Salary (MMK)'
 ].max()
-
-organizations = filtered_df[
-    'Organization/Event'
-].nunique()
 
 with k1:
     st.metric(
@@ -139,14 +130,14 @@ with k2:
 
 with k3:
     st.metric(
-        "Highest Salary (MMK)",
-        f"{int(highest_salary):,}"
+        "Employment Roles",
+        employment_roles
     )
 
 with k4:
     st.metric(
-        "Organizations Joined",
-        organizations
+        "Highest Salary (MMK)",
+        f"{int(highest_salary):,}"
     )
 
 st.markdown("---")
@@ -162,14 +153,15 @@ if page == "Home":
     ### Volunteering, Employment, and Salary Growth Journey
 
     This dashboard transforms my personal experiences into structured
-    data to analyze how volunteering and employment opportunities
-    shaped my professional development and salary growth over time.
+    data to explore how volunteering and employment shaped my
+    professional development and salary growth over time.
 
-    This project explores:
-    - How volunteering influenced career opportunities
-    - Which roles contributed most to growth
-    - How salary increased over time
-    - What future decisions can improve career development
+    This project focuses on:
+    - Volunteering experiences
+    - Employment journey
+    - Salary growth
+    - Leadership and career development
+    - Ethical and responsible data storytelling
     """)
 
     st.markdown("---")
@@ -186,9 +178,9 @@ elif page == "Data Visualizations":
     st.title("📊 Data Visualizations")
 
     # ---------------------------------------------------
-    # VOLUNTEER TIMELINE
+    # VOLUNTEER JOURNEY CHART
     # ---------------------------------------------------
-    st.subheader("📅 Volunteering Journey Across Organizations")
+    st.subheader("📅 Volunteer Journey Timeline")
 
     volunteer_df = filtered_df[
         filtered_df['Journey Type'] == "Volunteer"
@@ -202,7 +194,7 @@ elif page == "Data Visualizations":
         color="Year",
         text="Duration (Months)",
         hover_data=["Role"],
-        title="Volunteer Journey Timeline"
+        title="Volunteer Experience Duration"
     )
 
     fig_timeline.update_layout(
@@ -215,14 +207,14 @@ elif page == "Data Visualizations":
 
     st.caption("""
     Insight:
-    Long-term volunteering improved leadership,
-    communication, and teamwork skills.
+    Long-term volunteering strengthened leadership,
+    teamwork, and communication skills.
     """)
 
     st.markdown("---")
 
     # ---------------------------------------------------
-    # EMPLOYMENT ROLES BAR CHART
+    # EMPLOYMENT ROLE CHART
     # ---------------------------------------------------
     st.subheader("💼 Employment Roles and Work Duration")
 
@@ -238,7 +230,7 @@ elif page == "Data Visualizations":
         color="Year",
         text="Duration (Months)",
         hover_data=["Organization/Event"],
-        title="Work Experience Duration by Role"
+        title="Employment Experience Duration"
     )
 
     fig_employment.update_layout(
@@ -258,7 +250,7 @@ elif page == "Data Visualizations":
     st.markdown("---")
 
     # ---------------------------------------------------
-    # SALARY GROWTH LINE CHART
+    # SALARY GROWTH CHART
     # ---------------------------------------------------
     st.subheader("📈 Salary Growth Journey")
 
@@ -314,42 +306,6 @@ elif page == "Data Visualizations":
     for later employment opportunities.
     """)
 
-    st.markdown("---")
-
-    # ---------------------------------------------------
-    # ORGANIZATION PARTICIPATION
-    # ---------------------------------------------------
-    st.subheader("🏢 Organization Participation")
-
-    org_counts = filtered_df[
-        'Organization/Event'
-    ].value_counts().reset_index()
-
-    org_counts.columns = [
-        'Organization/Event',
-        'Count'
-    ]
-
-    fig_org = px.bar(
-        org_counts,
-        x='Organization/Event',
-        y='Count',
-        color='Count',
-        title='Participation Across Organizations'
-    )
-
-    fig_org.update_layout(
-        xaxis_tickangle=-45
-    )
-
-    st.plotly_chart(fig_org, use_container_width=True)
-
-    st.caption("""
-    Insight:
-    Participating in multiple organizations improved
-    adaptability, networking, and leadership skills.
-    """)
-
 # ---------------------------------------------------
 # KEY INSIGHTS PAGE
 # ---------------------------------------------------
@@ -385,7 +341,7 @@ elif page == "Key Insights":
 
     st.success("""
     Volunteering created opportunities to build leadership,
-    teamwork, and communication skills.
+    communication, and teamwork skills.
     """)
 
     st.info("""
@@ -399,8 +355,8 @@ elif page == "Key Insights":
     """)
 
     st.error("""
-    Some periods involved high workloads
-    and stress from balancing multiple responsibilities.
+    Some periods involved stress from balancing
+    multiple responsibilities at once.
     """)
 
     st.markdown("---")
@@ -411,10 +367,10 @@ elif page == "Key Insights":
     Based on the data, I should:
 
     1. Continue joining meaningful leadership opportunities
-    2. Focus on long-term professional growth
-    3. Improve technical and communication skills
-    4. Maintain balance between work and volunteering
-    5. Prioritize sustainable career opportunities
+    2. Improve technical and professional skills
+    3. Maintain balance between volunteering and work
+    4. Focus on sustainable career growth
+    5. Continue building professional networks
     """)
 
 # ---------------------------------------------------
@@ -426,29 +382,31 @@ elif page == "Ethics & Responsibility":
 
     st.markdown("---")
 
+    # Privacy
     st.header("🔒 Privacy Statement")
 
     st.info("""
     - Sensitive personal information was removed
     - Third-party identities were anonymized
-    - Salary values were simplified for academic purposes
-    - Dataset used only for educational storytelling
+    - Salary values were simplified for educational purposes
+    - Dataset used only for academic storytelling
     """)
 
     st.markdown("---")
 
+    # Bias & Limitations
     st.header("⚠️ Bias & Limitations")
 
     with st.expander("Memory Bias"):
         st.write("""
-        Some experiences rely on personal memory,
-        which may affect accuracy.
+        Some experiences rely on personal reflection
+        and memory, which may affect accuracy.
         """)
 
     with st.expander("Small Dataset"):
         st.write("""
         The dataset is limited and may not fully represent
-        long-term professional development.
+        long-term career development.
         """)
 
     with st.expander("Subjective Interpretation"):
@@ -459,26 +417,28 @@ elif page == "Ethics & Responsibility":
 
     st.markdown("---")
 
+    # Visualization Justification
     st.header("📊 Visualization Justification")
 
     st.success("""
-    - Timeline chart visualizes volunteering progression
+    - Volunteer bar chart visualizes volunteer journey duration
     - Employment chart shows work experience duration
-    - Salary line chart highlights growth trends
-    - Participation chart shows organizational involvement
+    - Salary line chart highlights career growth over time
+    - Histogram compares volunteer and employment experiences
     """)
 
     st.markdown("---")
 
+    # Responsible Decision
     st.header("🎯 Responsible Interpretation")
 
     st.warning("""
-    This dashboard identifies trends and reflections,
+    This dashboard identifies patterns and reflections,
     not direct causation.
 
-    Career growth is influenced by multiple factors,
-    including education, economic conditions,
-    and personal opportunities.
+    Career growth depends on multiple factors including
+    education, economic conditions, opportunities,
+    and personal development.
     """)
 
 # ---------------------------------------------------
