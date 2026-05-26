@@ -150,6 +150,7 @@ if page == "Home":
     st.title("📖 My Growth Journey Dashboard")
 
     st.markdown("""
+
 ### Volunteering, Leadership, and Salary Growth Journey
 
     This dashboard transforms my personal experiences into data-driven insights.
@@ -157,6 +158,7 @@ if page == "Home":
     shaped my professional growth and salary development over time.
 
     Through this project, I wanted to understand:
+    
     - How volunteering contributed to my career opportunities
     - Which years showed the biggest growth
     - How leadership experiences influenced my development
