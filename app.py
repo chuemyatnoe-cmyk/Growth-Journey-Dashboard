@@ -110,6 +110,9 @@ if page == "Home":
     - Which years showed the biggest growth
     - How leadership experiences influenced my development
     - What decisions I should make differently in the future
+    - Now I can see what I achieve throughout these years but I got a lot of rejections to grow. 
+    - To get a job, I got at least 5 rejections from the companies and their main reason is that I don't have a degree because the roles that I applied are customer service and operations. 
+    - As all you see, now I study Data Science but my working experiences are totally different from my study.
     """)
 
     st.markdown("---")
