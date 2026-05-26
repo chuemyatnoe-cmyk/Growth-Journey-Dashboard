@@ -85,7 +85,7 @@ selected_journey = st.sidebar.multiselect(
     default=df['Journey Type'].unique()
 )
 
-# Apply filters
+# Apply Filters
 filtered_df = df[
     (df['Year'].isin(selected_years)) &
     (df['Journey Type'].isin(selected_journey))
@@ -150,21 +150,18 @@ if page == "Home":
     st.title("📖 My Growth Journey Dashboard")
 
     st.markdown("""
-
-### Volunteering, Leadership, and Salary Growth Journey
-
-    This dashboard transforms my personal experiences into data-driven insights.
-    It explores how volunteering, leadership roles, and organizational involvement
+    This dashboard transforms my personal experiences into data-driven insights,
+    showing how volunteering, leadership roles, and organizational involvement
     shaped my professional growth and salary development over time.
 
     Through this project, I wanted to understand:
-    
-    - How volunteering contributed to my career opportunities
-    - Which years showed the biggest growth
-    - How leadership experiences influenced my development
-    - What decisions I should make differently in the future
-    """)
 
+    - How volunteering contributed to career opportunities
+    - Which years showed the greatest professional growth
+    - How leadership experiences influenced my development
+    - How salary growth evolved across different roles
+    - What future decisions could improve my career journey
+    """)
 
     st.markdown("---")
 
@@ -180,7 +177,7 @@ elif page == "Data Visualizations":
     st.title("📊 Data Visualizations")
 
     # ---------------------------------------------------
-    # VOLUNTEER JOURNEY CHART
+    # VOLUNTEER JOURNEY
     # ---------------------------------------------------
     st.subheader("📅 Volunteer Journey Timeline")
 
@@ -210,7 +207,7 @@ elif page == "Data Visualizations":
     st.caption("""
     Insight:
     Long-term volunteering strengthened leadership,
-    teamwork, and communication skills.
+    communication, and teamwork skills.
     """)
 
     st.markdown("---")
@@ -252,7 +249,7 @@ elif page == "Data Visualizations":
     st.markdown("---")
 
     # ---------------------------------------------------
-    # SALARY GROWTH CHART
+    # SALARY GROWTH LINE CHART
     # ---------------------------------------------------
     st.subheader("📈 Salary Growth Journey")
 
