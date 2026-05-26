@@ -241,6 +241,44 @@ elif page == "Data Visualizations":
     st.markdown("---")
 
     # ---------------------------------------------------
+# EMPLOYMENT ROLE DURATION BAR CHART
+# ---------------------------------------------------
+st.subheader("💼 Employment Roles and Work Duration")
+
+# Filter employment data
+employment_df = filtered_df[
+    filtered_df['Journey Type'] == "Employment"
+]
+
+# Create bar chart
+fig_employment = px.bar(
+    employment_df,
+    x="Duration (Months)",
+    y="Role",
+    orientation="h",
+    color="Year",
+    text="Duration (Months)",
+    hover_data=["Organization/Event"],
+    title="Work Experience Duration by Role"
+)
+
+# Improve layout
+fig_employment.update_layout(
+    xaxis_title="Duration Worked (Months)",
+    yaxis_title="Employment Role",
+    legend_title="Year"
+)
+
+# Show chart
+st.plotly_chart(fig_employment, use_container_width=True)
+
+st.caption("""
+Insight:
+Longer employment durations reflect career stability,
+professional growth, and increasing responsibility over time.
+""")
+
+    # ---------------------------------------------------
     # JOURNEY TYPE DISTRIBUTION
     # ---------------------------------------------------
     st.subheader("📊 Volunteer vs Employment Roles")
