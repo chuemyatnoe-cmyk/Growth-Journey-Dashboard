@@ -65,7 +65,22 @@ page = st.sidebar.radio(
 )
 
 # ---------------------------------------------------
-# TOP FILTERS
+# SIDEBAR NAVIGATION ONLY
+# ---------------------------------------------------
+st.sidebar.title("📌 Navigation")
+
+page = st.sidebar.radio(
+    "Go to:",
+    [
+        "Home",
+        "Data Visualizations",
+        "Key Insights",
+        "Ethics & Responsibility"
+    ]
+)
+
+# ---------------------------------------------------
+# TOP FILTERS INSIDE DASHBOARD
 # ---------------------------------------------------
 st.markdown("## 🎛️ Dashboard Filters")
 
@@ -95,7 +110,7 @@ with f3:
         default=df['Organization/Event'].unique()
     )
 
-# Apply Filters
+# Apply filters
 filtered_df = df[
     (df['Year'].isin(selected_years)) &
     (df['Journey Type'].isin(selected_journey)) &
