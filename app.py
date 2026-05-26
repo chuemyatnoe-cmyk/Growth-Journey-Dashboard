@@ -150,19 +150,19 @@ if page == "Home":
     st.title("📖 My Growth Journey Dashboard")
 
     st.markdown("""
-    ### Volunteering, Employment, and Salary Growth Journey
+### Volunteering, Leadership, and Salary Growth Journey
 
-    This dashboard transforms my personal experiences into structured
-    data to explore how volunteering and employment shaped my
-    professional development and salary growth over time.
+    This dashboard transforms my personal experiences into data-driven insights.
+    It explores how volunteering, leadership roles, and organizational involvement
+    shaped my professional growth and salary development over time.
 
-    This project focuses on:
-    - Volunteering experiences
-    - Employment journey
-    - Salary growth
-    - Leadership and career development
-    - Ethical and responsible data storytelling
+    Through this project, I wanted to understand:
+    - How volunteering contributed to my career opportunities
+    - Which years showed the biggest growth
+    - How leadership experiences influenced my development
+    - What decisions I should make differently in the future
     """)
+
 
     st.markdown("---")
 
