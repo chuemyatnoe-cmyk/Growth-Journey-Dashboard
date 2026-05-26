@@ -260,38 +260,7 @@ elif page == "Data Visualizations":
 
     st.markdown("---")
 
-    # ---------------------------------------------------
-    # ORGANIZATION PARTICIPATION
-    # ---------------------------------------------------
-    st.subheader("🏢 Participation Across Organizations")
-
-    org_counts = filtered_df[
-        'Organization/Event'
-    ].value_counts().reset_index()
-
-    org_counts.columns = [
-        'Organization/Event',
-        'Count'
-    ]
-
-    fig_org = px.bar(
-        org_counts,
-        x='Organization/Event',
-        y='Count in Year',
-        color='Count',
-        title='Organization Participation'
-    )
-
-    fig_org.update_layout(
-        xaxis_tickangle=-45
-    )
-
-    st.plotly_chart(fig_org, use_container_width=True)
-
-    st.caption("""
-    Insight: Joining different organizations improved adaptability,
-    networking, and teamwork skills.
-    """)
+   
 
 # ---------------------------------------------------
 # KEY INSIGHTS PAGE
