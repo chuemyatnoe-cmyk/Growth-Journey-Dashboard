@@ -51,10 +51,33 @@ st.write("This dashboard transforms my personal story into structured data, show
 # 2. Visualizations
 st.header("📊 Data Visualizations")
 
-# Timeline chart
-fig_timeline = px.timeline(filtered_df, x_start="Start Date", x_end="End Date", y="Role", color="Journey Type",
-                           hover_data=["Organization/Event"])
-st.subheader("Journey Timeline")
+# Volunteer Journey Timeline Bar Chart
+st.subheader("📅 Volunteering Journey Timeline")
+
+# Filter volunteer data only
+volunteer_df = filtered_df[filtered_df['Journey Type'] == "Volunteer"]
+
+# Count volunteer activities by year
+volunteer_years = volunteer_df.groupby("Year").size().reset_index(name="Number of Volunteer Roles")
+
+# Create bar chart
+fig_timeline = px.bar(
+    volunteer_years,
+    x="Year",
+    y="Number of Volunteer Roles",
+    text="Number of Volunteer Roles",
+    color="Number of Volunteer Roles",
+    title="Volunteer Journey Across Years"
+)
+
+# Improve layout
+fig_timeline.update_layout(
+    xaxis_title="Year",
+    yaxis_title="Volunteer Activities",
+    showlegend=False
+)
+
+# Show chart
 st.plotly_chart(fig_timeline, use_container_width=True)
 
 # Salary growth line
