@@ -277,7 +277,7 @@ elif page == "Data Visualizations":
     fig_org = px.bar(
         org_counts,
         x='Organization/Event',
-        y='Count',
+        y='Count in Year',
         color='Count',
         title='Organization Participation'
     )
